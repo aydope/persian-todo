@@ -36,9 +36,3 @@ Open `index.html` in a browser. No install needed.
 ## Notes
 
 Tasks are saved only while the tab is open.
-
----
-
-## Why it was made
-
-To practice task management, drag & drop, and simple animations.
