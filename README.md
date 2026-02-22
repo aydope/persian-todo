@@ -1,4 +1,4 @@
-# Farmanravayi bar Zaman (Todo)
+# Persian Todo (وظیفه من)
 
 This is a simple To-Do app.
 It is in Persian (RTL) and easy to use.
