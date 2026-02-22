@@ -1,0 +1,66 @@
+@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap");
+
+:root {
+  --imperial-blue: #1a2a44;
+  --persian-gold: #c5a059;
+  --stone-gray: #f2f4f7;
+}
+
+body {
+  font-family: "Vazirmatn", sans-serif;
+  background: var(--stone-gray);
+  background-image: radial-gradient(
+    circle at 2px 2px,
+    #e2e8f0 1px,
+    transparent 0
+  );
+  background-size: 24px 24px;
+}
+
+.task-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.task-card:hover {
+  background: #fafafa;
+}
+
+.imperial-border {
+  border-right: 4px solid var(--persian-gold);
+}
+
+.dragging {
+  opacity: 0.3;
+  transform: scale(0.98);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+}
+
+#customDropdown {
+  display: none;
+  z-index: 100;
+  border: 1px solid #e5e7eb;
+}
+
+.btn-empire {
+  background: var(--imperial-blue);
+  color: var(--persian-gold);
+  border: 1px solid var(--persian-gold);
+}
+
+.btn-empire:hover {
+  background: #0f1a2a;
+  transform: translateY(-1px);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
