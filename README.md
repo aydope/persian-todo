@@ -1,4 +1,4 @@
-# Persian Todo (وظیفه من)
+# Farmaan (فرمانروایی بر زمان)
 
 A beautiful Persian (RTL) To-Do app with drag & drop, session management, and image export.
 
@@ -45,7 +45,7 @@ Clone or download, then open `index.html`. No install needed.
 
 ```bash
 git clone <repo-url>
-cd persian-todo
+cd Farmaan
 open index.html
 ```
 
