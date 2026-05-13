@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta
       name="description"
-      content="A simple Persian To-Do app with clean RTL design and drag & drop tasks."
+      content="Persian To-Do app with session management and image export"
     />
     <meta name="theme-color" content="#c5a059" />
     <script src="./src/assets/tailwind.min.js"></script>
@@ -15,9 +15,52 @@
     <script src="./src/assets/jquery-3.7.1.min.js"></script>
     <link rel="stylesheet" href="./src/assets/bootstrap-icons.css" />
     <link rel="stylesheet" href="src/style.css" />
+    <style>
+      :root {
+        --bg-color: #f8fafc;
+        --card-color: #ffffff;
+        --primary-color: #1a2a44;
+        --accent-color: #c5a059;
+        --text-color: #334155;
+        --muted-color: #94a3b8;
+        --border-color: #e2e8f0;
+      }
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        transition: all 0.3s;
+      }
+      .task-card {
+        background: var(--card-color);
+        border: 1px solid var(--border-color);
+        transition: all 0.2s;
+        cursor: default;
+      }
+      .task-card:hover {
+        border-color: var(--accent-color);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+      .task-card.dragging {
+        opacity: 0.5;
+        border-style: dashed;
+      }
+      .imperial-border {
+        border-color: var(--border-color);
+      }
+      .btn-empire {
+        background: var(--primary-color);
+        color: var(--accent-color);
+        border: 1px solid var(--accent-color);
+      }
+      .btn-empire:hover {
+        background: var(--accent-color);
+        color: var(--primary-color);
+      }
+    </style>
   </head>
 
   <body class="min-h-screen pb-20">
+    <!-- Preloader -->
     <div
       id="preloader"
       class="fixed inset-0 z-[110] bg-[#1a2a44] flex flex-col items-center justify-center"
@@ -25,44 +68,73 @@
       <div class="mb-6 opacity-80">
         <i class="bi bi-shield-shaded text-6xl text-[#c5a059]"></i>
       </div>
-      <span
-        style="
-          letter-spacing: normal;
-          text-rendering: optimizeLegibility;
-          font-variant-ligatures: normal;
-        "
-        class="text-[#c5a059] text-sm tracking-[5px] font-bold"
+      <span class="text-[#c5a059] text-sm tracking-[5px] font-bold"
         >پندار نیک . گفتار نیک . کردار نیک</span
       >
     </div>
 
-    <div class="max-w-2xl mx-auto pt-8 px-6">
-      <!-- Session Info Bar -->
-      <div
-        class="mb-6 bg-white/80 backdrop-blur-sm rounded-xl p-3 border border-gray-200/60 flex items-center justify-between text-xs"
-      >
-        <div class="flex items-center gap-3">
-          <div class="flex items-center gap-2 text-gray-500">
+    <div class="max-w-2xl mx-auto pt-6 px-6">
+      <!-- Session & Theme Bar -->
+      <div class="mb-4 flex items-center justify-between gap-3 flex-wrap">
+        <div
+          class="flex items-center gap-3 bg-white/80 backdrop-blur-sm rounded-xl p-2.5 border border-gray-200/60 text-xs"
+        >
+          <div class="flex items-center gap-1.5 text-gray-500">
             <i class="bi bi-database"></i>
-            <span>فضای سشن:</span>
-            <span id="sessionSize" class="font-bold text-slate-700">--</span>
+            <span id="sessionSize">--</span>
           </div>
           <div class="w-px h-4 bg-gray-200"></div>
           <div class="text-gray-400">
             <span id="sessionItems">۰</span> وظیفه
           </div>
+          <div class="w-px h-4 bg-gray-200"></div>
+          <button
+            id="clearSessionBtn"
+            class="text-red-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded-lg transition-all flex items-center gap-1 font-bold"
+          >
+            <i class="bi bi-trash3"></i>
+          </button>
+          <div class="w-px h-4 bg-gray-200"></div>
+          <button
+            id="backupBtn"
+            class="text-blue-400 hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-lg transition-all flex items-center gap-1 font-bold"
+            title="پشتیبان"
+          >
+            <i class="bi bi-download"></i>
+          </button>
+          <label
+            class="text-green-400 hover:text-green-600 hover:bg-green-50 px-2 py-1 rounded-lg transition-all flex items-center gap-1 font-bold cursor-pointer"
+            title="بازیابی"
+          >
+            <i class="bi bi-upload"></i>
+            <input
+              type="file"
+              id="restoreInput"
+              accept=".json"
+              class="hidden"
+            />
+          </label>
         </div>
         <button
-          id="clearSessionBtn"
-          class="text-red-400 hover:text-red-600 hover:bg-red-50 px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 font-bold"
+          id="themeSelector"
+          class="bg-white/80 backdrop-blur-sm rounded-xl p-2.5 border border-gray-200/60 text-xs flex items-center gap-2 hover:bg-gray-50 transition-all font-bold text-gray-600"
         >
-          <i class="bi bi-trash3"></i>
-          پاک‌سازی سشن
+          <i class="bi bi-lightbulb"></i>
+          <span>مدرن</span>
         </button>
       </div>
 
+      <!-- Quote -->
+      <div
+        class="mb-6 text-center bg-white/50 backdrop-blur-sm rounded-xl p-3 border border-gray-100/50"
+      >
+        <p id="dailyQuoteText" class="text-sm italic text-gray-400"></p>
+        <p id="dailyQuoteAuthor" class="text-xs text-gray-300 mt-1"></p>
+      </div>
+
+      <!-- Header -->
       <header
-        class="mb-12 flex justify-between items-center border-b border-gray-200 pb-6"
+        class="mb-6 flex justify-between items-center border-b border-gray-200 pb-4"
       >
         <div class="flex items-center gap-4">
           <div
@@ -72,25 +144,60 @@
           </div>
           <div>
             <h1
-              class="text-2xl font-black text-slate-800 tracking-tight italic"
+              class="text-2xl font-black tracking-tight italic"
+              style="color: var(--text-color)"
             >
               فرمانروایی بر زمان
             </h1>
-            <p id="date-display" class="text-slate-400 text-xs font-medium"></p>
+            <p id="date-display" class="text-gray-400 text-xs font-medium"></p>
           </div>
         </div>
-        <div class="flex flex-col items-end">
-          <span
-            id="task-count"
-            class="text-[10px] font-black bg-gray-100 px-3 py-1 rounded text-slate-500 uppercase"
-            >درحال پردازش: ۰</span
-          >
-        </div>
+        <span
+          id="task-count"
+          class="text-[10px] font-black bg-gray-100 px-3 py-1 rounded text-slate-500"
+          >۰ / ۰</span
+        >
       </header>
 
+      <!-- Search & Filter -->
+      <div class="mb-4 flex gap-2 items-center">
+        <div class="relative flex-grow">
+          <i
+            class="bi bi-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 text-sm"
+          ></i>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="جستجوی زنده..."
+            class="w-full bg-white border border-gray-200 rounded-xl py-2.5 pr-10 pl-4 text-sm outline-none focus:border-[#c5a059] transition-all"
+          />
+        </div>
+        <div class="flex gap-1">
+          <button
+            class="filter-btn bg-[#1a2a44] text-white px-3 py-2 rounded-lg text-xs font-bold transition-all"
+            data-filter="همه"
+          >
+            همه
+          </button>
+          <button
+            class="filter-btn bg-gray-100 text-gray-600 px-3 py-2 rounded-lg text-xs font-bold transition-all"
+            data-filter="فعال"
+          >
+            فعال
+          </button>
+          <button
+            class="filter-btn bg-gray-100 text-gray-600 px-3 py-2 rounded-lg text-xs font-bold transition-all"
+            data-filter="انجام شده"
+          >
+            انجام
+          </button>
+        </div>
+      </div>
+
+      <!-- Input Box -->
       <div
         id="inputBox"
-        class="bg-white border border-gray-200 rounded-xl p-6 mb-10 shadow-sm"
+        class="bg-white border border-gray-200 rounded-xl p-6 mb-8 shadow-sm"
       >
         <div class="flex flex-col gap-2">
           <input
@@ -104,7 +211,6 @@
             placeholder="برای افزودن توضیحات، اینجا بنویسید..."
             class="w-full bg-transparent text-sm text-slate-500 outline-none resize-none h-10 placeholder:text-gray-200 mt-2 border-r border-gray-100 pr-4"
           ></textarea>
-
           <div class="flex items-center justify-between mt-6">
             <div class="relative">
               <div
@@ -113,14 +219,14 @@
               >
                 <i
                   id="selectedIcon"
-                  class="bi bi-collection-fill text-[#c5a059]"
+                  class="bi bi-person-fill text-blue-500"
                 ></i>
-                <span id="selectedLabel">دسته‌بندی</span>
+                <span id="selectedLabel">شخصی</span>
                 <i class="bi bi-chevron-down text-[10px]"></i>
               </div>
               <div
                 id="customDropdown"
-                class="absolute top-full mt-1 w-48 bg-white rounded-lg shadow-xl p-1 border border-gray-100"
+                class="absolute top-full mt-1 w-48 bg-white rounded-lg shadow-xl p-1 border border-gray-100 hidden"
               >
                 <div
                   class="tag-opt p-2 hover:bg-gray-50 rounded cursor-pointer text-xs flex items-center gap-3"
@@ -132,7 +238,7 @@
                 </div>
                 <div
                   class="tag-opt p-2 hover:bg-gray-50 rounded cursor-pointer text-xs flex items-center gap-3"
-                  data-val="امپراتوری"
+                  data-val="کاری"
                   data-icon="bi-briefcase-fill"
                   data-color="text-[#c5a059]"
                 >
@@ -148,12 +254,11 @@
                 </div>
               </div>
             </div>
-
             <button
               id="addBtn"
               class="btn-empire px-8 py-2 rounded-lg text-xs font-black flex items-center gap-2 shadow-md transition-all"
             >
-              <span>افزودن به کتیبه</span>
+              <span>افزودن</span>
               <div
                 id="btnLoader"
                 class="hidden w-3 h-3 border-2 border-[#c5a059]/30 border-t-[#c5a059] rounded-full animate-spin"
@@ -163,8 +268,10 @@
         </div>
       </div>
 
+      <!-- Task List -->
       <div id="taskList" class="space-y-1"></div>
     </div>
+
     <script src="src/main.js"></script>
   </body>
 </html>
